@@ -5,19 +5,10 @@ import os
 import sys
 import cx_Oracle
 
-APCORE_QUERY_TEMPLATE = """
-                          SELECT 'AP' host, alitem FROM ap2.AUTH_LIST_ITEM
-                          WHERE alitem LIKE '{}%'
-                          AND (end_dt IS NULL OR end_dt > CURRENT_DATE)
-                          UNION ALL
-                          SELECT 'CORE' host, alitem FROM o_auth.AUTH_LIST_ITEM
-                          WHERE alitem LIKE '{}%'
-                          AND (end_dt IS NULL OR end_dt > CURRENT_DATE)
-                          ORDER BY 2,1
-                        """
-LOGIN = "login"
-PSW = "psw"
-DNS = "dns"
+APCORE_QUERY_TEMPLATE = "SELECT 'AP' host, alitem FROM ap2.AUTH_LIST_ITEM WHERE alitem LIKE '{0}%' AND (end_dt IS NULL OR end_dt > CURRENT_DATE) UNION ALL SELECT 'CORE' host, alitem FROM o_auth.AUTH_LIST_ITEM WHERE alitem LIKE '{0}%' AND (end_dt IS NULL OR end_dt > CURRENT_DATE) ORDER BY 2,1"
+LOGIN = "oы"
+PSW = "oы"
+DNS = "10"
 def parse_arguments():
     if len(sys.argv) > 2:
         print('Неправильное количество аргументов')
@@ -35,7 +26,7 @@ def check_arguments(pan):
         exit(2)
     
 def apcore(pan):
-    query = APCORE_QUERY_TEMPLATE.format(pan)
+    query = APCORE_QUERY_TEMPLATE.format(pan) 
     sys_connection = None
     sys_cursor = None
     

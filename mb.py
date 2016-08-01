@@ -10,9 +10,9 @@ ADD_QUERY_TEMPLATE = """
                            ap2.I_CRMS_SUBSCRIPTION_STATUS
                            WHERE status = 1 and pan = '{}'
                      """
-LOGIN = "login"
-PSW = "psw"
-DNS = "dns"
+LOGIN = "a"
+PSW = "a"
+DNS = "10"
 def parse_arguments():
     if len(sys.argv) > 2:
         print('Неправильное количество аргументов')

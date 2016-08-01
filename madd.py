@@ -15,7 +15,7 @@ DATE = None
 TS = 1 # по умолчанию первый
 COUNT = 1 # по умолчанию одна
 ADD_QUERY_TEMPLATE = """
-begin
+BEGIN
    onm_api_crms.api_emul.create_passage_trx(
      p_plaza_out => '643:00042:01:{}', 
      p_plaza_in => '643:00042:01:{}',
@@ -23,12 +23,11 @@ begin
      p_class => '{}',
      p_cnt => {},
      p_dt => to_date('{}', 'yyyy-mm-dd hh24:mi:ss'));
-commit;
-end;
+END;
 """
-LOGIN = "login"
-PSW = "password"
-DNS = "dns"
+LOGIN = "o"
+PSW = "o"
+DNS = "10"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Все писать сюды')
@@ -77,13 +76,13 @@ def do_madd(settings):
     # print(query)
     exit_code = os.system('echo "{}" | ./dummy_sqlplus.sh'.format(query))
     print("exit code: {}".format(exit_code))
-    #query_api_login = """
-    #                     query_api_login
-    #                  """
+    #query_api_login = "BEGIN :k := onm.ac.login('sales', 'sales', 'CRMS'); onm.ac.init(:k); END;"
     #try:
     #    crms_connection = cx_Oracle.connect(LOGIN, PSW, DNS)
-    #    crms_cursor = crms_connection.cursor()
-    #    crms_cursor.execute(query_api_login)
+    #    crms_cursor = crms_connection.cursor()    
+    #    key = crms_cursor.var(cx_Oracle.STRING)
+    #    crms_cursor.execute(query_api_login, k = key)
+    #    crms_cursor.execute("BEGIN onm.ac.set_position(позиция); END;)
     #    crms_cursor.execute(query)
     #    print(query)
     #    crms_connection.commit()
