@@ -1,11 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import argparse
+import cx_Oracle
 import datetime
 import os
 import sys
 import traceback
+
 
 
 PAN = None
@@ -69,31 +71,30 @@ def check_arguments(settings):
     #в single_madd сделать try и ловить исключение
 
 def do_madd(settings):
-    # crms_connection = None
-    # crms_cursor = None
+    crms_connection = None
+    crms_cursor = None
     date = settings.date.strftime('%Y-%m-%d %X')
     query = ADD_QUERY_TEMPLATE.format(settings.inn, settings.out, settings.pan, settings.ts, settings.count, date)
     # print(query)
-    exit_code = os.system('echo "{}" | ./dummy_sqlplus.sh'.format(query))
-    print("exit code: {}".format(exit_code))
-    #query_api_login = "BEGIN :k := onm.ac.login('sales', 'sales', 'CRMS'); onm.ac.init(:k); END;"
-    #try:
-    #    crms_connection = cx_Oracle.connect(LOGIN, PSW, DNS)
-    #    crms_cursor = crms_connection.cursor()    
-    #    key = crms_cursor.var(cx_Oracle.STRING)
-    #    crms_cursor.execute(query_api_login, k = key)
-    #    crms_cursor.execute("BEGIN onm.ac.set_position(позиция); END;)
-    #    crms_cursor.execute(query)
-    #    print(query)
-    #    crms_connection.commit()
-    #    print("commited")
-    #except cx_Oracle.DatabaseError as e:
-    #    error, = e.args
-    #    print(error.message)
-    #if crms_cursor:
-    #    crms_cursor.close()
-    #if crms_connection:
-    #    crms_connection.close()
+    #exit_code = os.system('echo "{}" | ./dummy_sqlplus.sh'.format(query))
+    #print("exit code: {}".format(exit_code))
+    query_api_login = "BEGIN :k := onm.ac.login('l', 's', 'C'); onm.ac.init(:k); onm.ac.set_position(31); END;"
+    try:
+        crms_connection = cx_Oracle.connect(LOGIN, PSW, DNS)
+        crms_cursor = crms_connection.cursor()    
+        key = crms_cursor.var(cx_Oracle.STRING)
+        crms_cursor.execute(query_api_login, k = key)
+        crms_cursor.execute(query)
+        print(query)
+        crms_connection.commit()
+        print("commited")
+    except cx_Oracle.DatabaseError as e:
+        error, = e.args
+        print(error.message)
+    if crms_cursor:
+        crms_cursor.close()
+    if crms_connection:
+        crms_connection.close()
     
 def single_madd():
     try:
