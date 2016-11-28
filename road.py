@@ -11,8 +11,8 @@ PATH = '643:1:1:'
 
 road51 = [[51,0,True,False,False],
           [53,2500,True,False,False],
-          [2,2530,False,True,False],
-          [1,2551,True,False,False],
+          [2,2501,False,True,False],
+          [1,2550,True,False,False],
           [4,4750,False,True,False],
           [5,4751,False,False,True],
           [8,4752,True,False,False],
