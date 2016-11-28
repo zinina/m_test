@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import os
+import random
 import sys
 import traceback
 
@@ -11,7 +12,7 @@ PATH = '643:1:1:'
 
 road51 = [[51,0,True,False,False],
           [53,2500,True,False,False],
-          [2,2501,False,True,False],
+          [2,2500,False,True,False],
           [1,2550,True,False,False],
           [4,4750,False,True,False],
           [5,4751,False,False,True],
@@ -50,8 +51,7 @@ def check_arguments(settings):
         if abs(settings.date.year - datetime.datetime.now().year) > 1:
             raise Exception('Слишком отдаленный период времени')
     
-
-def make_routs(settings):
+def make_routes(settings):
     allrouts = []
     if settings.road == 51:
         road = road51
@@ -71,26 +71,33 @@ def make_routs(settings):
                 allrouts.append(route + ([l] if not l[4] else []))
     return allrouts            
     
-    
-    
-def make_csv(allrouts,settings):
-    file = open('/home/zinina/routs/test.csv', 'w') #открываю файл на запись
-    
-    for i in allrouts:
-        for l in i:
-            print(l)
-            plaza = PATH + str(l[0]) #формирую точку вьезда вида 643:1:1:узел
-            p_time = round((l[1]/50000)*60) #рассчет времени до этой точки в минутах
-            pt = 0
-            pt = pt + p_time
-            p_date = settings.date + datetime.timedelta(minutes=p_time) #прибавление полученного интервала к указанной дате
-            file.write(settings.tag + ';' + p_date.strftime('%d.%m.%Y %X') + ';' + plaza + ';'  + '\n') #формирование строки csv файла
-            #p_date = p_date + datetime.timedelta(minutes=15) #двигаю исходную дату для чистоты эксперимента
-        settings.date = settings.date + datetime.timedelta(minutes=pt) + datetime.timedelta(minutes=1)
-        
-    file.close()            
-                             
+def calc_times(allroutes, settings):
+    for route in allroutes:
+        for i in range(len(route)):
+            # формирую точку вьезда вида 643:1:1:узел
+            plaza = PATH + str(route[i][0])
+            
+            # рассчет времени до этой точки в минутах
+            mins = round(route[i][1]*3.6/50/60)
+            
+            # прибавление полученного интервала к указанной дате
+            route_dt = settings.date + datetime.timedelta(minutes=mins)
+            if i > 0 and (route_dt - route[i-1][1]).seconds == 0:
+                route_dt += datetime.timedelta(minutes=1)
+            
+            route[i] = [settings.tag, route_dt, plaza]
 
+        settings.date = route[-1][1] + datetime.timedelta(minutes=1)
+          
+def make_csv(allroutes):
+    # открываю файл на запись
+    file = open('/home/user/Projects/test.csv', 'w')
+    for route in allroutes:
+        random.shuffle(route)
+        for point in route:
+            file.write('{};{};{};\n'.format(point[0], point[1].strftime('%d.%m.%Y %X'), point[2]))
+    file.close()
+    
 
 def prime():
     try:
@@ -99,9 +106,11 @@ def prime():
     except Exception as e:
         print('Неверные параметры: ' + str(e))
         return
-    print(settings)
-    print(make_routs(settings))
-    make_csv(make_routs(settings),settings)    
+    # print(settings)
+    # print(make_routs(settings))
+    routes = make_routes(settings)
+    calc_times(routes, settings)
+    make_csv(routes)    
 
 def main():
     prime()  
