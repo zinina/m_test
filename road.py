@@ -76,21 +76,33 @@ def check_arguments(settings):
 def make_routes(settings):
     allrouts = []
     if settings.road == 51:
-        road = road51
+        road = road51    
+        for i in road:
+            if not i[2]:
+                continue
+            route = [i]
+            for l in road:
+                if l[1] < i[1] or l[2]:
+                    continue
+                if l[4]:
+                    route.append(l)
+                if l[3]:
+                    #print(route + ([l] if not l[4] else []))
+                    allrouts.append(route + ([l] if not l[4] else []))
     else:
         road = road52
-    for i in road:
-        if not i[2]:
-            continue
-        route = [i]
-        for l in road:
-            if l[1] < i[1] or l[2]:
+        for i in road:
+            if not i[2]:
                 continue
-            if l[4]:
-                route.append(l)
-            if l[3]:
-                #print(route + ([l] if not l[4] else []))
-                allrouts.append(route + ([l] if not l[4] else []))
+            route = [i]
+            for l in road:
+                if l[1] < i[1] or (l[2] if not l[4]):
+                    continue
+                if l[4]:
+                    route.append(l)
+                if l[3]:
+                    #print(route + ([l] if not l[4] else []))
+                    allrouts.append(route + ([l] if not l[4] else []))
     return allrouts            
     
 def calc_times(allroutes, settings):
@@ -110,7 +122,7 @@ def calc_times(allroutes, settings):
             route[i] = [settings.tag, route_dt, plaza]
 
         settings.date = route[-1][1] + datetime.timedelta(minutes=1)
-    print(allroutes)    
+    #print(allroutes)    
           
 def make_csv(allroutes,settings):
     # открываю файл на запись
