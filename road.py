@@ -10,42 +10,43 @@ import traceback
 
 PATH = '643:1:1:'
 
-road51 = [[51,0,True,False,False],
-          [53,2500,True,False,False],
-          [2,2501,False,True,False],
-          [1,2550,True,False,False],
-          [4,4750,False,True,False],
-          [5,4751,False,False,True],
-          [8,4752,True,False,False],
-          [55,8650,False,True,False],
-          [9,8651,True,False,False],
-          [61,17450,False,True,False],
-          [63,17451,True,False,False],
-          [65,19650,True,False,False],
-          [11,22550,False,True,False],
-          [67,22551,True,False,False],
-          [17,31050,False,True,True],
-          [77,39551,True,False,False],
-          [78,39552,True,False,False],
-          [19,53750,False,True,False]]
+# [id, distance, is_input, is_output, is_mandatory]
+road51 = [[51,0,    True, False,False],
+          [53,2500, True, False,False],
+          [2,2501,  False,True, False],
+          [1,2550,  True, False,False],
+          [4,4750,  False,True, False],
+          [5,4751,  False,False,True],
+          [8,4752,  True, False,False],
+          [55,8650, False,True, False],
+          [9,8651,  True, False,False],
+          [61,17450,False,True, False],
+          [63,17451,True, False,False],
+          [65,19650,True, False,False],
+          [11,22550,False,True, False],
+          [67,22551,True, False,False],
+          [17,31050,False,True, True],
+          [77,39551,True, False,False],
+          [78,39552,True, False,False],
+          [19,53750,False,True, False]]
 
-road52 = [[20,0,True,False,False],
-          [79,14200,False,True,False],
-          [18,22200,True,False,True],
-          [68,30900,False,True,False],
-          [12,30901,True,False,False],
-          [66,33800,False,True,False],
-          [64,36000,True,False,False],
-          [62,36001,False,True,False],
-          [56,44600,True,False,False],
-          [10,44601,False,True,False],
-          [7,48700,False,True,False],
-          [6,48701,False,False,True],
-          [3,48702,True,False,False],
-          [54,50550,False,True,False],
-          [2,50900,False,True,False],
-          [1,50901,True,False,False],
-          [52,53450,False,True,False]]
+road52 = [[20,0,    True, False,False],
+          [79,14200,False,True, False],
+          [18,22200,True, False,True],
+          [68,30900,False,True, False],
+          [12,30901,True, False,False],
+          [66,33800,False,True, False],
+          [64,36000,True, False,False],
+          [62,36001,False,True, False],
+          [56,44600,True, False,False],
+          [10,44601,False,True, False],
+          [7,48700, False,True, False],
+          [6,48701, False,False,True],
+          [3,48702, True, False,False],
+          [54,50550,False,True, False],
+          [2,50900, False,True, False],
+          [1,50901, True, False,False],
+          [52,53450,False,True, False]]
 
 
 def parse_arguments():
@@ -75,34 +76,18 @@ def check_arguments(settings):
     
 def make_routes(settings):
     allrouts = []
-    if settings.road == 51:
-        road = road51    
-        for i in road:
-            if not i[2]:
+    road = road51 if settings.road == 51 else road52
+    for i in road:
+        if not i[2]:
+            continue
+        route = [i]
+        for l in road:
+            if l[1] < i[1] or (not l[3] and not l[4]) or l[0] == i[0]:
                 continue
-            route = [i]
-            for l in road:
-                if l[1] < i[1] or l[2]:
-                    continue
-                if l[4]:
-                    route.append(l)
-                if l[3]:
-                    #print(route + ([l] if not l[4] else []))
-                    allrouts.append(route + ([l] if not l[4] else []))
-    else:
-        road = road52
-        for i in road:
-            if not i[2]:
-                continue
-            route = [i]
-            for l in road:
-                if l[1] < i[1] or (l[2] if not l[4]):
-                    continue
-                if l[4]:
-                    route.append(l)
-                if l[3]:
-                    #print(route + ([l] if not l[4] else []))
-                    allrouts.append(route + ([l] if not l[4] else []))
+            if l[4]:
+                route.append(l)
+            if l[3]:
+                allrouts.append(route + ([l] if not l[4] else []))
     return allrouts            
     
 def calc_times(allroutes, settings):
@@ -126,7 +111,7 @@ def calc_times(allroutes, settings):
           
 def make_csv(allroutes,settings):
     # открываю файл на запись
-    file = open('/home/zinina/routs/test.csv', 'w')
+    file = open('/home/user/Projects/test.csv', 'w')
     for route in allroutes:
         if settings.shuffle == 1:
             random.shuffle(route)
